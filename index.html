@@ -1,489 +1,382 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BeColor - Réservation en Ligne</title>
+    <title>Amine | CodeByAd</title>
+    <!-- Google Font: Space Grotesk for that "Tech/Coder" look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+    
     <style>
+        :root {
+            --bg-color: #050505;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --accent: #ffffff;
+            --text-gray: #888;
+            --border: rgba(255, 255, 255, 0.1);
+            --glow: 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            cursor: none; /* We will use a custom cursor */
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #000000 0%, #0a3d2e 50%, #1a5c47 100%);
-            min-height: 100vh;
-            color: #fff;
-            font-weight: 500;
+            background-color: var(--bg-color);
+            color: white;
+            font-family: 'Space Grotesk', sans-serif;
+            overflow-x: hidden;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
+        /* --- 1. THE "CODE & ZIGZAG" BACKGROUND --- */
+        .background-effect {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            opacity: 0.5;
         }
 
-        /* Header */
-        .header {
-            text-align: center;
-            padding: 60px 20px;
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(10px);
-            border-radius: 30px;
-            margin-bottom: 40px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        /* Floating Code Snippets in Background */
+        .floating-code {
+            position: fixed;
+            color: rgba(255,255,255,0.05);
+            font-family: monospace;
+            font-size: 1.5rem;
+            user-select: none;
+            z-index: -1;
+            animation: floatUp 15s linear infinite;
         }
 
-        .header h1 {
-            font-size: 4em;
-            font-weight: 500;
-            margin-bottom: 15px;
-            background: linear-gradient(135deg, #ffffff 0%, #4ade80 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        @keyframes floatUp {
+            0% { transform: translateY(100vh); opacity: 0; }
+            50% { opacity: 0.5; }
+            100% { transform: translateY(-10vh); opacity: 0; }
         }
 
-        .header p {
-            font-size: 1.2em;
-            color: #a0a0a0;
-            margin-bottom: 20px;
+        /* --- 2. CUSTOM CURSOR (Matches your logo cursor) --- */
+        .cursor-dot, .cursor-outline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: 9999;
+            pointer-events: none;
+        }
+        .cursor-dot {
+            width: 8px;
+            height: 8px;
+            background-color: white;
+        }
+        .cursor-outline {
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transition: width 0.2s, height 0.2s;
         }
 
-        .header .info {
+        /* --- 3. HEADER & LOGO --- */
+        header {
             display: flex;
-            justify-content: center;
-            gap: 30px;
-            flex-wrap: wrap;
-            margin-top: 20px;
-            font-size: 0.95em;
-            color: #b0b0b0;
-        }
-
-        .header .info span {
-            display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 8px;
+            padding: 30px 5%;
+            position: relative;
         }
 
-        /* Reservation Button */
-        .reserve-btn {
-            display: inline-block;
-            margin-top: 30px;
-            padding: 20px 50px;
-            background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
-            border: none;
-            border-radius: 15px;
-            color: #000;
-            font-size: 1.3em;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            box-shadow: 0 10px 30px rgba(74, 222, 128, 0.3);
-        }
-
-        .reserve-btn:hover {
-            transform: translateY(-5px) scale(1.05);
-            box-shadow: 0 15px 40px rgba(74, 222, 128, 0.5);
-        }
-
-        /* Booking Form */
-        .booking-section {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 30px;
-            padding: 50px;
-            max-width: 700px;
-            margin: 60px auto;
-            scroll-margin-top: 100px;
-        }
-
-        .booking-section h2 {
-            font-size: 2.5em;
-            font-weight: 500;
-            margin-bottom: 30px;
-            text-align: center;
-            background: linear-gradient(135deg, #ffffff 0%, #4ade80 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .form-group {
-            margin-bottom: 25px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #b0b0b0;
-            font-size: 0.95em;
-        }
-
-        input, select, textarea {
-            width: 100%;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            color: #fff;
-            font-size: 1em;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: #4ade80;
-            background: rgba(255, 255, 255, 0.08);
-        }
-
-        select option {
-            background: #1a1a1a;
-            color: #fff;
-        }
-
-        .submit-btn {
-            width: 100%;
-            padding: 18px;
-            background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
-            border: none;
-            border-radius: 12px;
-            color: #000;
-            font-size: 1.1em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 10px;
-        }
-
-        .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(74, 222, 128, 0.3);
-        }
-
-        .form-note {
-            text-align: center;
-            color: #888;
-            font-size: 0.9em;
-            margin-top: 20px;
-        }
-
-        #specificService {
-            display: none;
-        }
-
-        /* Contact Info */
-        .contact-info {
-            text-align: center;
-            padding: 40px 20px;
-            margin-top: 40px;
-        }
-
-        .contact-info h3 {
-            font-size: 2em;
-            font-weight: 500;
-            margin-bottom: 20px;
-            color: #4ade80;
-        }
-
-        .contact-links {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
+        .logo-container img {
+            height: 60px; /* Adjust size based on your image */
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));
         }
 
         .contact-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            padding: 15px 30px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            color: #fff;
+            padding: 10px 24px;
+            border: 1px solid white;
+            background: transparent;
+            color: white;
+            border-radius: 50px;
             text-decoration: none;
-            transition: all 0.3s ease;
+            font-weight: bold;
+            transition: 0.3s;
         }
-
         .contact-btn:hover {
-            background: rgba(74, 222, 128, 0.1);
-            border-color: #4ade80;
-            transform: translateY(-3px);
+            background: white;
+            color: black;
+            box-shadow: 0 0 15px white;
         }
 
-        /* Responsive */
+        /* --- 4. HERO SECTION --- */
+        .hero {
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 0 5%;
+        }
+
+        .hero h2 {
+            font-size: 1.5rem;
+            color: var(--text-gray);
+            margin-bottom: 10px;
+        }
+
+        .hero h1 {
+            font-size: 4rem; /* Big Typography */
+            line-height: 1.1;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, #fff, #666);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            max-width: 600px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #ccc;
+        }
+
+        /* --- 5. SERVICES GRID (Instead of a list) --- */
+        .section-title {
+            padding: 0 5%;
+            font-size: 2rem;
+            margin-bottom: 40px;
+            border-left: 4px solid white;
+            padding-left: 20px;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 0 5% 100px 5%;
+        }
+
+        .skill-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            transition: 0.3s;
+        }
+        
+        .skill-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.08);
+            border-color: white;
+        }
+
+        /* --- 6. PROJECTS (The WOW factor) --- */
+        .projects {
+            padding: 0 5% 100px 5%;
+        }
+
+        .project-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            margin-bottom: 50px;
+            display: flex;
+            flex-wrap: wrap;
+            transition: 0.3s;
+        }
+
+        .project-card:hover {
+            border-color: white;
+            box-shadow: var(--glow);
+        }
+
+        .project-image {
+            flex: 1;
+            min-width: 300px;
+            height: 350px;
+            background-color: #111;
+            /* Placeholder for your screenshots */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            font-size: 1.5rem;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .project-info {
+            flex: 1;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .project-info h3 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .project-info p {
+            color: var(--text-gray);
+            margin-bottom: 25px;
+            font-size: 1.1rem;
+        }
+
+        .tag {
+            display: inline-block;
+            background: rgba(255,255,255,0.1);
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            margin-bottom: 20px;
+            width: fit-content;
+        }
+
+        /* --- 7. FOOTER --- */
+        footer {
+            text-align: center;
+            padding: 50px;
+            border-top: 1px solid var(--border);
+        }
+        
+        .social-links a {
+            color: white;
+            margin: 0 15px;
+            text-decoration: none;
+            font-size: 1.2rem;
+            transition: 0.3s;
+        }
+        .social-links a:hover { color: var(--text-gray); }
+
+        /* Responsive Fixes */
         @media (max-width: 768px) {
-            .header h1 {
-                font-size: 2.5em;
-            }
-
-            .header .info {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .booking-section {
-                padding: 30px 20px;
-            }
-
-            .reserve-btn {
-                padding: 15px 35px;
-                font-size: 1.1em;
-            }
+            .hero h1 { font-size: 2.5rem; }
+            .project-card { flex-direction: column; }
+            .project-image { height: 250px; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <h1>BeColor</h1>
-            <p>Salon de Beauté</p>
-            <div class="info">
-                <span>⏰ Lun - Sam: 10h00 - 22h00</span>
-                <span>📍 Premier Étage, Apt 5, Av. Mohammed V, Rabat</span>
+
+    <!-- BACKGROUND ANIMATION: Floating Code -->
+    <div class="background-effect"></div>
+    <!-- Random code snippets floating up -->
+    <div class="floating-code" style="left: 10%; animation-duration: 12s;">&lt;div&gt;</div>
+    <div class="floating-code" style="left: 30%; animation-duration: 18s;">{ code: true }</div>
+    <div class="floating-code" style="left: 70%; animation-duration: 15s;">if (design)</div>
+    <div class="floating-code" style="left: 90%; animation-duration: 20s;">&lt;/&gt;</div>
+
+    <!-- CUSTOM CURSOR -->
+    <div class="cursor-dot" id="cursor-dot"></div>
+    <div class="cursor-outline" id="cursor-outline"></div>
+
+    <!-- HEADER -->
+    <header>
+        <div class="logo-container">
+            <!-- REPLACE 'your-logo.png' WITH YOUR ACTUAL IMAGE FILE -->
+            <img src="your-logo.png" alt="CodeByAd Logo"> 
+        </div>
+        <a href="mailto:aminedkyar@gmail.com" class="contact-btn">Let's Talk</a>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <h2>Hi, I'm Amine</h2>
+        <h1>DIGITAL EXPERIENCES<br>THAT GROW BUSINESS.</h1>
+        <p>
+            I am the creative mind behind <strong>CodebyAd</strong>. I turn complex ideas into 
+            modern, functional, and visually stunning websites. Specializing in Web Development, 
+            UI/UX, and Digital Solutions.
+        </p>
+    </section>
+
+    <!-- SERVICES -->
+    <h2 class="section-title">What I Do</h2>
+    <section class="skills-grid">
+        <div class="skill-card"><h3>Front-End Dev</h3><p>HTML / CSS / JS</p></div>
+        <div class="skill-card"><h3>Back-End</h3><p>Python / Solutions</p></div>
+        <div class="skill-card"><h3>UI Design</h3><p>Modern Esthetics</p></div>
+        <div class="skill-card"><h3>eCommerce</h3><p>Business Growth</p></div>
+    </section>
+
+    <!-- PROJECTS -->
+    <h2 class="section-title">Featured Works</h2>
+    <section class="projects">
+        
+        <!-- PROJECT 1: BECOLOR -->
+        <div class="project-card">
+            <!-- Add screenshot image here later -->
+            <div class="project-image" style="background-image: url('becolor-screenshot.jpg');">
+                <!-- If no image, this text shows -->
+                [Becolor Screenshot]
             </div>
-            <a href="#booking" class="reserve-btn">🎯 Réserver Maintenant</a>
-        </div>
-
-        <!-- Booking Form -->
-        <div class="booking-section" id="booking">
-            <h2>Réserver un Rendez-vous</h2>
-            <form id="bookingForm">
-                <div class="form-group">
-                    <label for="name">Nom Complet *</label>
-                    <input type="text" id="name" name="name" required placeholder="Votre nom">
-                </div>
-
-                <div class="form-group">
-                    <label for="phone">Téléphone *</label>
-                    <input type="tel" id="phone" name="phone" required placeholder="+212 XXX-XXXXXX">
-                </div>
-
-                <div class="form-group">
-                    <label for="serviceCategory">Catégorie de Service *</label>
-                    <select id="serviceCategory" name="serviceCategory" required>
-                        <option value="">Choisissez une catégorie</option>
-                        <option value="Coiffage">Coiffage</option>
-                        <option value="Coupe">Coupe</option>
-                        <option value="Coloration">Coloration</option>
-                        <option value="Balayages">Balayages & Ombré</option>
-                        <option value="Proteine">Soin au Protéine</option>
-                        <option value="SoinCheveux">Soin de Cheveux</option>
-                        <option value="SoinVisage">Soins du Visage</option>
-                        <option value="MainsPieds">Soins des Mains et des Pieds</option>
-                        <option value="Epilation">Épilation</option>
-                        <option value="Maquillage">Maquillage</option>
-                        <option value="FauxCils">Faux Cils</option>
-                    </select>
-                </div>
-
-                <div class="form-group" id="specificService">
-                    <label for="service">Service Spécifique *</label>
-                    <select id="service" name="service" required>
-                        <option value="">Sélectionnez le service exact</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="date">Date Souhaitée *</label>
-                    <input type="date" id="date" name="date" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="time">Heure Souhaitée *</label>
-                    <input type="time" id="time" name="time" min="10:00" max="22:00" required>
-                </div>
-
-                <button type="submit" class="submit-btn">📩 Confirmer la Réservation</button>
-                
-                <p class="form-note">* Nous vous contacterons pour confirmer votre rendez-vous</p>
-            </form>
-        </div>
-
-        <!-- Contact Info -->
-        <div class="contact-info">
-            <h3>Nous Contacter</h3>
-            <div class="contact-links">
-                <a href="https://wa.me/212668545844" class="contact-btn" target="_blank">
-                    💬 WhatsApp
-                </a>
-                <a href="tel:+212668545844" class="contact-btn">
-                    📞 Appeler
-                </a>
-                <a href="https://instagram.com/becolor-rabat" class="contact-btn" target="_blank">
-                    📱 Instagram
-                </a>
-                <a href="mailto:beColor.Rabat@gmail.com" class="contact-btn">
-                    📧 Email
-                </a>
+            <div class="project-info">
+                <span class="tag">Web Design</span>
+                <h3>Becolor</h3>
+                <p>A stunning website for a beauty salon featuring online booking, service showcase, and customer testimonials. Designed to reflect elegance.</p>
+                <a href="#" class="contact-btn" style="border-color: #555;">View Project</a>
             </div>
         </div>
-    </div>
+
+        <!-- PROJECT 2: SYA DREAM SPA -->
+        <div class="project-card">
+            <!-- Add screenshot image here later -->
+            <div class="project-image" style="background-image: url('spa-screenshot.jpg');">
+                 <!-- If no image, this text shows -->
+                [Spa Screenshot]
+            </div>
+            <div class="project-info">
+                <span class="tag">Booking System</span>
+                <h3>Sya Dream Spa</h3>
+                <p>Complete spa booking platform with real-time availability, service packages, and a seamless user experience for wellness services.</p>
+                <a href="#" class="contact-btn" style="border-color: #555;">View Project</a>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div style="margin-bottom: 20px;">
+            <h3>CodeByAd</h3>
+            <p style="color: #666; margin-top: 10px;">bringing ideas to life.</p>
+        </div>
+        <div class="social-links">
+            <a href="#">Instagram</a>
+            <a href="#">WhatsApp</a>
+            <a href="#">Email</a>
+        </div>
+    </footer>
 
     <script>
-        // Services data with prices
-        const services = {
-            Coiffage: [
-                { name: "Brushing cheveux courts + Shampooing & conditioner", price: "40 DH" },
-                { name: "Brushing cheveux mi-longs + Shampooing & conditioner", price: "50 DH" },
-                { name: "Brushing cheveux longs + Shampooing & conditioner", price: "60 DH" },
-                { name: "Brushing wavy cheveux mi-longs + Shampooing & conditioner", price: "60 DH" },
-                { name: "Brushing wavy cheveux longs + Shampooing & conditioner", price: "70 DH" }
-            ],
-            Coupe: [
-                { name: "Coupe courte", price: "200 DH" },
-                { name: "Coupe simple", price: "150 DH" },
-                { name: "Coupe de pointes", price: "80 DH" }
-            ],
-            Coloration: [
-                { name: "Coloration", price: "300 DH" },
-                { name: "Coloration racines", price: "200 DH" },
-                { name: "Coloration sans ammoniaque", price: "400 DH" },
-                { name: "Coloration sans ammoniaque racines", price: "300 DH" }
-            ],
-            Balayages: [
-                { name: "Balayage cheveux court", price: "600 DH" },
-                { name: "Balayage cheveux mi-long", price: "800 DH" },
-                { name: "Balayage cheveux long", price: "1000 DH" },
-                { name: "Balayage ombré court", price: "800 DH" },
-                { name: "Balayage ombré mi-long", price: "1000 DH" },
-                { name: "Balayage ombré long", price: "1000 DH" },
-                { name: "Air Touch", price: "1200 DH" }
-            ],
-            Proteine: [
-                { name: "Protéine Tanino cheveux court", price: "600 DH" },
-                { name: "Protéine Tanino cheveux mi-long", price: "800 DH" },
-                { name: "Protéine Tanino cheveux long", price: "1000 DH" },
-                { name: "Protéine 'Soral' cheveux court", price: "800 DH" },
-                { name: "Protéine 'Soral' cheveux mi-long", price: "1000 DH" },
-                { name: "Protéine 'Soral' cheveux long", price: "1200 DH" }
-            ],
-            SoinCheveux: [
-                { name: "Soin hydratant au bac", price: "50 DH" },
-                { name: "Soin hydratant au bac premium", price: "80 DH" },
-                { name: "Soin hydratant (sous casque infra-rouge)", price: "150 DH" },
-                { name: "Soin Hydra-Therapy (protocol complet)", price: "450 DH" },
-                { name: "Soin Olaplex", price: "250 DH" }
-            ],
-            SoinVisage: [
-                { name: "Soin du visage basic", price: "250 DH" },
-                { name: "Soin mature lift avec demabrasion", price: "500 DH" },
-                { name: "Soin éclat", price: "400 DH" },
-                { name: "Soin hydratant", price: "400 DH" },
-                { name: "Soin détoxinant", price: "400 DH" },
-                { name: "Soin peau sèche", price: "350 DH" },
-                { name: "Soin purifiant", price: "350 DH" }
-            ],
-            MainsPieds: [
-                { name: "Manicurie simple", price: "60 DH" },
-                { name: "Manicurie simple avec french", price: "80 DH" },
-                { name: "Manicurie spa (Gommage + Masque)", price: "100 DH" },
-                { name: "Pédicurie simple", price: "100 DH" },
-                { name: "Pédicurie spa", price: "150 DH" },
-                { name: "Manicurie et pédicurie spa", price: "200 DH" },
-                { name: "Pose vernis simple", price: "25 DH" },
-                { name: "Pose vernis (Avec limage)", price: "30 DH" },
-                { name: "Pose vernis semi-permanent", price: "100 DH" },
-                { name: "Pose french", price: "40 DH" },
-                { name: "Pose de faux ongles", price: "80 DH" }
-            ],
-            Epilation: [
-                { name: "Épilation visage", price: "70 DH" },
-                { name: "Épilation sourcils", price: "30 DH" },
-                { name: "Épilation duvet", price: "20 DH" },
-                { name: "Épilation des aisselles", price: "40 DH" },
-                { name: "Épilation ½ jambes", price: "60 DH" },
-                { name: "Épilation jambes complètes", price: "100 DH" },
-                { name: "Épilation des bras", price: "60 DH" },
-                { name: "Épilation de bord du maillot", price: "40 DH" },
-                { name: "Épilation du maillot intégral", price: "80 DH" }
-            ],
-            Maquillage: [
-                { name: "Maquillage du jour", price: "100 DH" },
-                { name: "Maquillage soirée", price: "200 DH" }
-            ],
-            FauxCils: [
-                { name: "Cils par cils", price: "100 DH" }
-            ]
-        };
+        // Custom Cursor Logic
+        const dot = document.getElementById("cursor-dot");
+        const outline = document.getElementById("cursor-outline");
 
-        // Handle category selection
-        document.getElementById('serviceCategory').addEventListener('change', function() {
-            const category = this.value;
-            const serviceSelect = document.getElementById('service');
-            const specificServiceDiv = document.getElementById('specificService');
-            
-            if (category && services[category]) {
-                // Clear previous options
-                serviceSelect.innerHTML = '<option value="">Sélectionnez le service exact</option>';
-                
-                // Add services for selected category
-                services[category].forEach(service => {
-                    const option = document.createElement('option');
-                    option.value = ${service.name} - ${service.price};
-                    option.textContent = ${service.name} - ${service.price};
-                    serviceSelect.appendChild(option);
-                });
-                
-                // Show specific service dropdown
-                specificServiceDiv.style.display = 'block';
-                serviceSelect.required = true;
-            } else {
-                specificServiceDiv.style.display = 'none';
-                serviceSelect.required = false;
-            }
-        });
+        window.addEventListener("mousemove", function(e) {
+            const posX = e.clientX;
+            const posY = e.clientY;
 
-        // Form submission handler
-        document.getElementById('bookingForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const formData = {
-                name: document.getElementById('name').value,
-                phone: document.getElementById('phone').value,
-                category: document.getElementById('serviceCategory').options[document.getElementById('serviceCategory').selectedIndex].text,
-                service: document.getElementById('service').value,
-                date: document.getElementById('date').value,
-                time: document.getElementById('time').value
-            };
+            // Dot follows instantly
+            dot.style.left = `${posX}px`;
+            dot.style.top = `${posY}px`;
 
-            // Create WhatsApp message
-            const message = 🌟 *Nouvelle Réservation - BeColor*\n\n +
-                          👤 *Nom:* ${formData.name}\n +
-                          📞 *Téléphone:* ${formData.phone}\n +
-                          💇 *Catégorie:* ${formData.category}\n +
-                          ✨ *Service:* ${formData.service}\n +
-                          📅 *Date:* ${formData.date}\n +
-                          ⏰ *Heure:* ${formData.time};
-
-            const whatsappUrl = https://wa.me/212668545844?text=${encodeURIComponent(message)};
-            
-            // Open WhatsApp
-            window.open(whatsappUrl, '_blank');
-            
-            // Show success message
-            alert('Merci! Vous allez être redirigé vers WhatsApp pour confirmer votre réservation.');
-            
-            // Reset form
-            this.reset();
-            document.getElementById('specificService').style.display = 'none';
-        });
-
-        // Set minimum date to today
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('date').setAttribute('min', today);
-
-        // Smooth scroll for reservation button
-        document.querySelector('.reserve-btn').addEventListener('click', function(e) {
-            e.preventDefault();
-            document.getElementById('booking').scrollIntoView({ behavior: 'smooth' });
+            // Outline follows with slight delay
+            outline.animate({
+                left: `${posX}px`,
+                top: `${posY}px`
+            }, { duration: 500, fill: "forwards" });
         });
     </script>
 </body>
